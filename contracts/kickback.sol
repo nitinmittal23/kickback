@@ -9,6 +9,7 @@ contract kickback {
         uint total_failure;
         uint start;
         uint end;
+        bool eligible;
 
     }
     
@@ -21,8 +22,8 @@ contract kickback {
         return personIds;
     }
 
-    function getaccount(address _address) public view returns(address, string memory, uint, uint, uint, uint){
-        return (Allperson[_address].unique, Allperson[_address].name, Allperson[_address].total_count, Allperson[_address].total_failure, Allperson[_address].start, Allperson[_address].end);
+    function getaccount(address _address) public view returns(address, string memory, uint, uint, uint, uint, bool){
+        return (Allperson[_address].unique, Allperson[_address].name, Allperson[_address].total_count, Allperson[_address].total_failure, Allperson[_address].start, Allperson[_address].end, Allperson[_address].eligible);
     }
 
     function updateData(address _address, string memory _name) public  {
@@ -30,6 +31,9 @@ contract kickback {
             if( Allperson[personIds[i]].total_count > 0) {
                 if(now > Allperson[personIds[i]].end) {
                     Allperson[_address].total_failure = Allperson[_address].total_failure + 1;
+                    if(Allperson[_address].total_failure>3){
+                        Allperson[_address].eligible=false;
+                    }
                     Allperson[_address].start = Allperson[_address].start + 86400;
                     Allperson[_address].end = Allperson[_address].end + 86400;
                 }
@@ -37,6 +41,8 @@ contract kickback {
         }
 
         if(Allperson[_address].total_count == 0) {
+            personIds.push(_address);
+            Allperson[_address].eligible = true;
             Allperson[_address].unique = _address;
             Allperson[_address].name = _name;
             Allperson[_address].total_count = 1;
@@ -51,11 +57,14 @@ contract kickback {
             
 
         }
-           winningIds.length = 0;     
+        winningIds.length = 0;     
         for(uint i =0; i < personIds.length; i++) {
             if(Allperson[personIds[i]].total_count >= 27) {
-                winningIds.push(personIds[i]);
-                 }
+                if(Allperson[personIds[i]].eligible == true){
+                    winningIds.push(personIds[i]);
+                }
+
+            }
         }
         
     }
