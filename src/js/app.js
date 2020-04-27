@@ -158,9 +158,7 @@ App = {
         console.log(err.message);
       });
     });
-  }
-
-};
+  },
 
  getAllWinner: function() {
     console.log('Getting Tokens...');
@@ -210,7 +208,11 @@ App = {
 
 };
  
-
+$(function() {
+  $(window).load(function() {
+    App.init();
+  });
+});
 
 
       
